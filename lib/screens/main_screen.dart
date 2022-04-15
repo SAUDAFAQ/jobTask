@@ -1,10 +1,14 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:job_task/bloc/login_bloc.dart';
+import 'package:job_task/bloc/login_event.dart';
 import 'package:job_task/utilities/validator.dart';
 import 'package:job_task/values/strings.dart';
 import 'package:job_task/widget/gradient_button.dart';
 
+import '../bloc/login_state.dart';
 import '../services/http_service.dart';
 
 class MainScreen extends StatefulWidget {
@@ -37,12 +41,27 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.blueGrey[900],
-        body: getDictionaryFormWidget(context));
+    return BlocProvider(
+      create: (context) => LoginBloc(),
+      child: BlocBuilder<LoginBloc, LoginState>(
+        builder: (_context, state) {
+          return BlocListener<LoginBloc, LoginState>(
+            listener: (context, state) {
+              print(state.response);
+              state.loginStatus == LoginRequestStatus.success
+                  ? showSnackBar(StringLocalization.youAreRegistered)
+                  : showSnackBar(StringLocalization.issueOccurred);
+            },
+            child: Scaffold(
+                backgroundColor: Colors.blueGrey[900],
+                body: getDictionaryFormWidget(_context, state)),
+          );
+        },
+      ),
+    );
   }
 
-  getDictionaryFormWidget(BuildContext context) {
+  getDictionaryFormWidget(BuildContext context, LoginState state) {
     return Container(
       padding: const EdgeInsets.all(26),
       child: Column(
@@ -86,10 +105,13 @@ class _MainScreenState extends State<MainScreen> {
             height: 45,
             onPressed: () async {
               if (isValidated(_userNameController.text) == true) {
-                response = await postData(_userNameController.text);
-                response == '201'
-                    ? showSnackBar(StringLocalization.youAreRegistered)
-                    : showSnackBar(StringLocalization.issueOccurred);
+                BlocProvider.of<LoginBloc>(context)
+                    .add(LoginWithUsername(username: _userNameController.text));
+
+                // response = await postData(_userNameController.text);
+                // response == '201'
+                //     ? showSnackBar(StringLocalization.youAreRegistered)
+                //     : showSnackBar(StringLocalization.issueOccurred);
               }
             },
             text: const Text(
