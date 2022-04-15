@@ -47,7 +47,6 @@ class _MainScreenState extends State<MainScreen> {
         builder: (_context, state) {
           return BlocListener<LoginBloc, LoginState>(
             listener: (context, state) {
-              print(state.response);
               state.loginStatus == LoginRequestStatus.success
                   ? showSnackBar(StringLocalization.youAreRegistered)
                   : showSnackBar(StringLocalization.issueOccurred);
