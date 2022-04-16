@@ -150,8 +150,9 @@ class _MainScreenState extends State<MainScreen> {
               print(_userNameController.text.isEmpty);
               if (isValidated(_userNameController.text) == true &&
                   isPasswordValidated(_passwordController.text)) {
-                BlocProvider.of<LoginBloc>(context)
-                    .add(LoginWithUserDetails(username: _userNameController.text, password: _passwordController.text));
+                BlocProvider.of<LoginBloc>(context).add(LoginWithUserDetails(
+                    username: _userNameController.text,
+                    password: _passwordController.text));
 
                 // response = await postData(_userNameController.text);
                 // response == '201'
