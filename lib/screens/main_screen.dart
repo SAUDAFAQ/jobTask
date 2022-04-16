@@ -20,7 +20,9 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   final TextEditingController _userNameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool validate = true;
+  bool passwordValidate = true;
   String response = '';
 
   bool get isPopulated => _userNameController.text.isNotEmpty;
@@ -39,6 +41,20 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
+  bool isPasswordValidated(String password) {
+    if (Validators.isValidPassword(password) == false) {
+      setState(() {
+        passwordValidate = false;
+      });
+      return false;
+    } else {
+      setState(() {
+        passwordValidate = true;
+      });
+      return true;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -47,6 +63,7 @@ class _MainScreenState extends State<MainScreen> {
         builder: (_context, state) {
           return BlocListener<LoginBloc, LoginState>(
             listener: (context, state) {
+              print(state.response);
               state.loginStatus == LoginRequestStatus.success
                   ? showSnackBar(StringLocalization.youAreRegistered)
                   : showSnackBar(StringLocalization.issueOccurred);
@@ -97,15 +114,44 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ),
           const SizedBox(
+            height: 10,
+          ),
+          TextField(
+            controller: _passwordController,
+            style: const TextStyle(color: Colors.black),
+            obscureText: true,
+            enableSuggestions: false,
+            autocorrect: false,
+            decoration: InputDecoration(
+              hintText: StringLocalization.enterPassword,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(40),
+                borderSide: const BorderSide(color: Colors.deepOrangeAccent),
+              ),
+              errorText: passwordValidate
+                  ? null
+                  : StringLocalization.enterValidPassword,
+              fillColor: Colors.grey[100],
+              filled: true,
+              prefixIcon: const Icon(
+                Icons.password,
+                color: Colors.deepOrangeAccent,
+              ),
+              hintStyle: const TextStyle(color: Colors.grey),
+            ),
+          ),
+          const SizedBox(
             height: 30.0,
           ),
           GradientButton(
             width: 150,
             height: 45,
             onPressed: () async {
-              if (isValidated(_userNameController.text) == true) {
+              print(_userNameController.text.isEmpty);
+              if (isValidated(_userNameController.text) == true &&
+                  isPasswordValidated(_passwordController.text)) {
                 BlocProvider.of<LoginBloc>(context)
-                    .add(LoginWithUsername(username: _userNameController.text));
+                    .add(LoginWithUserDetails(username: _userNameController.text, password: _passwordController.text));
 
                 // response = await postData(_userNameController.text);
                 // response == '201'
