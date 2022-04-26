@@ -80,7 +80,7 @@ class _MainScreenState extends State<MainScreen> {
 
   getDictionaryFormWidget(BuildContext context, LoginState state) {
     return Container(
-      padding: const EdgeInsets.all(26),
+      padding: const EdgeInsets.all(28),
       child: Column(
         children: [
           const Spacer(),
