@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:job_task/bloc/login_event.dart';
 import 'package:job_task/bloc/login_state.dart';
-import 'package:job_task/services/http_service.dart';
+
+import '../repository/http_service.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc() : super(const LoginState()) {

@@ -4,12 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:job_task/bloc/login_bloc.dart';
 import 'package:job_task/bloc/login_event.dart';
+import 'package:job_task/user_details/screens/users_list_screen.dart';
 import 'package:job_task/utilities/validator.dart';
 import 'package:job_task/values/strings.dart';
 import 'package:job_task/widget/gradient_button.dart';
 
 import '../bloc/login_state.dart';
-import '../services/http_service.dart';
+import '../repository/http_service.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -82,7 +83,7 @@ class _MainScreenState extends State<MainScreen> {
       padding: const EdgeInsets.all(26),
       child: Column(
         children: [
-          Spacer(),
+          const Spacer(),
           const Text(
             StringLocalization.registerApp,
             style: TextStyle(
@@ -147,13 +148,16 @@ class _MainScreenState extends State<MainScreen> {
             width: 150,
             height: 45,
             onPressed: () async {
-              print(_userNameController.text.isEmpty);
               if (isValidated(_userNameController.text) == true &&
                   isPasswordValidated(_passwordController.text)) {
                 BlocProvider.of<LoginBloc>(context).add(LoginWithUserDetails(
                     username: _userNameController.text,
                     password: _passwordController.text));
-
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const UsersListScreen()),
+                );
                 // response = await postData(_userNameController.text);
                 // response == '201'
                 //     ? showSnackBar(StringLocalization.youAreRegistered)
